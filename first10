@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>First 10 — Start Your Day Right</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #0f1b2d; --navy2: #162236; --navy3: #1e2f47; --navy4: #253858;
+  --gold: #c9a84c; --gold2: #e2b96a;
+  --muted: rgba(255,255,255,0.45); --dim: rgba(255,255,255,0.72); --green: #4caf7d;
+}
+[data-theme="rose"]     { --navy:#1f0d12; --navy2:#2d1219; --navy3:#3d1a24; --navy4:#50222f; --gold:#e07a8a; --gold2:#f0a0ae; }
+[data-theme="forest"]   { --navy:#0b1a10; --navy2:#112418; --navy3:#173222; --navy4:#1e402c; --gold:#5cad6e; --gold2:#80c990; }
+[data-theme="slate"]    { --navy:#111418; --navy2:#191e25; --navy3:#222830; --navy4:#2c343f; --gold:#7b9fc7; --gold2:#a4bedd; }
+[data-theme="amethyst"] { --navy:#140d1f; --navy2:#1e1230; --navy3:#281840; --navy4:#321f52; --gold:#a07ad4; --gold2:#c4a0e8; }
+
+html,body { background:var(--navy); font-family:'DM Sans',sans-serif; color:#fff; min-height:100vh; display:flex; align-items:center; justify-content:center; transition:background .4s; }
+.app { width:390px; min-height:100vh; background:var(--navy); display:flex; flex-direction:column; position:relative; overflow:hidden; transition:background .4s; }
+
+.screen { display:none; flex-direction:column; min-height:100vh; }
+.screen.active { display:flex; animation:fadeIn .35s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes sunRise { from{opacity:0;transform:scale(.7) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+@keyframes dropIn  { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+@keyframes bpulse  { 0%,100%{transform:scale(1);border-color:rgba(255,255,255,.15)} 50%{transform:scale(1.14);border-color:rgba(255,255,255,.4)} }
+
+/* ── ONBOARDING ── */
+.onboard { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 32px; text-align:center; }
+.ob-sun { margin-bottom:32px; animation:sunRise .9s ease-out; }
+.onboard h1 { font-family:'Playfair Display',serif; font-size:38px; font-weight:400; margin-bottom:6px; }
+.tagline { font-size:15px; color:var(--gold2); margin-bottom:10px; font-weight:300; letter-spacing:.5px; }
+.onboard .sub { font-size:13px; color:var(--muted); margin-bottom:36px; }
+.ob-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px; text-align:left; width:100%; }
+.ob-input { width:100%; background:var(--navy2); border:1.5px solid rgba(255,255,255,.12); border-radius:14px; padding:15px 18px; color:#fff; font-family:'DM Sans',sans-serif; font-size:17px; outline:none; transition:border-color .2s; margin-bottom:18px; text-align:center; }
+.ob-input:focus { border-color:var(--gold); }
+.ob-input::placeholder { color:rgba(255,255,255,.2); }
+.ob-foot { font-size:13px; color:var(--muted); margin-top:14px; font-weight:300; }
+
+/* ── TOP BAR ── */
+.top-bar { display:flex; align-items:center; justify-content:space-between; padding:54px 24px 14px; position:relative; z-index:10; }
+.hamburger { display:flex; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
+.hamburger span { width:22px; height:1.5px; background:var(--dim); border-radius:2px; display:block; transition:all .25s; }
+.hamburger.open span:nth-child(1) { transform:rotate(45deg) translate(4.5px,4.5px); }
+.hamburger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+.hamburger.open span:nth-child(3) { transform:rotate(-45deg) translate(4.5px,-4.5px); }
+
+/* ── DROPDOWN ── */
+.overlay { display:none; position:fixed; inset:0; z-index:100; }
+.overlay.on { display:block; }
+.dropdown { position:absolute; top:108px; left:18px; background:var(--navy2); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:6px; z-index:200; min-width:185px; display:none; animation:dropIn .2s ease; box-shadow:0 8px 32px rgba(0,0,0,.45); }
+.dropdown.open { display:block; }
+.dd-item { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:10px; cursor:pointer; font-size:14px; transition:background .15s; color:#fff; }
+.dd-item:hover { background:var(--navy3); }
+.dd-item.danger { color:#f07070; }
+.dd-sep { height:1px; background:rgba(255,255,255,.07); margin:4px 0; }
+.dd-name { padding:10px 14px 6px; font-size:12px; color:var(--muted); }
+
+/* ── GREETING ── */
+.greeting { padding:6px 24px 26px; text-align:center; }
+.greeting h1 { font-family:'Playfair Display',serif; font-size:29px; font-weight:400; letter-spacing:-.3px; margin-bottom:5px; }
+.greeting p { font-size:14px; color:var(--muted); font-weight:300; }
+
+/* ── CARDS ── */
+.cards { padding:0 16px; display:flex; flex-direction:column; gap:10px; flex:1; }
+.step-card { background:var(--navy2); border-radius:16px; padding:15px 18px; cursor:pointer; transition:background .2s,transform .15s; border:1px solid rgba(255,255,255,.06); }
+.step-card:hover { background:var(--navy3); transform:translateY(-1px); }
+.step-card.done { border-color:rgba(255,255,255,.12); }
+.step-head { display:flex; align-items:center; justify-content:space-between; }
+.step-left { display:flex; align-items:center; gap:11px; }
+.step-num { width:26px; height:26px; border-radius:50%; background:var(--navy3); border:1.5px solid rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; color:var(--dim); flex-shrink:0; }
+.step-icon { width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.06); display:none; align-items:center; justify-content:center; flex-shrink:0; }
+.step-card.done .step-num { display:none; }
+.step-card.done .step-icon { display:flex; }
+.step-title { font-size:16px; font-weight:500; }
+.check-ring { width:24px; height:24px; border-radius:50%; border:1.5px solid rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; transition:all .3s; }
+.step-card.done .check-ring { background:rgba(76,175,125,.12); border-color:var(--green); }
+.check-ring svg path { opacity:0; }
+.step-card.done .check-ring svg path { opacity:1; }
+.step-details { margin-top:11px; padding-top:11px; border-top:1px solid rgba(255,255,255,.07); }
+.dr { display:flex; gap:18px; }
+.di label { font-size:11px; color:var(--muted); display:block; margin-bottom:2px; }
+.di span { font-size:14px; font-weight:500; }
+.gl { font-size:11px; color:var(--muted); }
+.gv { font-size:14px; font-weight:500; margin-bottom:6px; }
+.mr { display:flex; align-items:center; justify-content:space-between; }
+.play { width:34px; height:34px; border-radius:50%; background:var(--navy4); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.tbadge { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14); color:var(--gold2); font-size:12px; padding:3px 10px; border-radius:20px; font-weight:500; }
+
+/* ── CTA ── */
+.cta { margin:18px 16px 34px; background:var(--gold); color:var(--navy); border:none; border-radius:14px; padding:17px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:500; cursor:pointer; width:calc(100% - 32px); display:flex; align-items:center; justify-content:center; gap:7px; transition:filter .2s,transform .15s; }
+.cta:hover { filter:brightness(1.1); transform:translateY(-1px); }
+.cta:active { transform:scale(.98); }
+
+/* ── DETAIL HEADERS ── */
+.dsh { display:flex; align-items:center; gap:13px; padding:54px 24px 18px; }
+.back { width:36px; height:36px; border-radius:50%; background:var(--navy2); border:1px solid rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+.dsh h2 { font-family:'Playfair Display',serif; font-size:24px; font-weight:400; }
+.sp { padding:0 24px; }
+.hint { font-size:13px; color:var(--muted); margin-bottom:18px; }
+.fl { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; font-weight:400; }
+
+/* ── MOOD GRID ── */
+.mg { display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px; margin-bottom:20px; }
+.mc { background:var(--navy2); border-radius:13px; padding:14px 10px; text-align:center; cursor:pointer; border:1.5px solid transparent; transition:all .2s; }
+.mc:hover { border-color:rgba(255,255,255,.15); }
+.mc.sel { border-color:var(--gold); background:rgba(255,255,255,.04); }
+.mc .em { font-size:24px; margin-bottom:5px; }
+.mc .lbl { font-size:12px; color:var(--muted); }
+.mc.sel .lbl { color:var(--gold2); }
+
+/* ── SLIDERS ── */
+.slsec { margin-bottom:22px; }
+.sllbl { display:flex; justify-content:space-between; margin-bottom:9px; }
+.sllbl span { font-size:14px; color:var(--muted); }
+.sllbl strong { color:var(--gold2); font-size:15px; font-weight:500; }
+input[type=range] { -webkit-appearance:none; width:100%; height:4px; background:var(--navy3); border-radius:2px; outline:none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:var(--gold); cursor:pointer; border:3px solid var(--navy); }
+
+/* ── TEXT INPUT ── */
+.ti { width:100%; background:var(--navy2); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:13px 15px; color:#fff; font-family:'DM Sans',sans-serif; font-size:15px; outline:none; margin-bottom:12px; transition:border-color .2s; }
+.ti:focus { border-color:rgba(255,255,255,.3); }
+.ti::placeholder { color:rgba(255,255,255,.22); }
+
+/* ── BREATHING ── */
+.bwrap { display:flex; flex-direction:column; align-items:center; padding:26px 24px; }
+.bring { width:176px; height:176px; border-radius:50%; border:2px solid rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; margin-bottom:28px; animation:bpulse 4s ease-in-out infinite; }
+.binner { width:126px; height:126px; border-radius:50%; background:rgba(255,255,255,.03); display:flex; align-items:center; justify-content:center; flex-direction:column; }
+.btext { font-size:15px; color:var(--gold2); margin-bottom:3px; }
+.bnum { font-size:30px; font-weight:300; }
+.binst { text-align:center; color:var(--muted); font-size:14px; line-height:1.7; }
+
+/* ── MODE CARDS ── */
+.modes { display:flex; gap:9px; margin-top:16px; }
+.mcard { flex:1; border-radius:14px; padding:13px 10px; text-align:center; cursor:pointer; transition:all .2s; border:1px solid rgba(255,255,255,.07); background:var(--navy2); }
+.mcard.sel { background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.2); }
+.mcard .mi { font-size:20px; margin-bottom:5px; }
+.mcard .mt { font-size:13px; font-weight:500; }
+.mcard .ms { font-size:11px; color:rgba(255,255,255,.3); margin-top:2px; }
+
+/* ── TASKS ── */
+.ti2 { background:var(--navy2); border-radius:12px; padding:13px 15px; display:flex; align-items:center; gap:11px; margin-bottom:9px; cursor:pointer; transition:background .2s; border:1px solid rgba(255,255,255,.05); }
+.ti2:hover { background:var(--navy3); }
+.ti2.done { opacity:.45; }
+.tcheck { width:22px; height:22px; border-radius:50%; border:1.5px solid rgba(255,255,255,.22); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.ti2.done .tcheck { background:var(--green); border-color:var(--green); }
+.ttext { font-size:15px; flex:1; }
+.ti2.done .ttext { text-decoration:line-through; color:var(--muted); }
+.ptag { font-size:11px; padding:3px 8px; border-radius:20px; background:rgba(255,255,255,.06); color:var(--gold2); border:1px solid rgba(255,255,255,.1); }
+
+/* ── LOCK IN ── */
+.libox { background:var(--navy2); border-radius:15px; padding:17px 22px; width:100%; border:1px solid rgba(255,255,255,.06); margin-bottom:14px; }
+.listats { display:flex; gap:9px; width:100%; }
+.listat { flex:1; background:var(--navy2); border-radius:13px; padding:13px; text-align:center; border:1px solid rgba(255,255,255,.06); }
+.listat .n { font-size:19px; font-weight:300; color:var(--gold2); }
+.listat .l { font-size:11px; color:rgba(255,255,255,.32); margin-top:3px; }
+
+/* ── COMPLETION ── */
+.cscreen { flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 30px; }
+.csun { width:100px; margin-bottom:30px; animation:sunRise .9s ease-out; }
+.cscreen h1 { font-family:'Playfair Display',serif; font-size:31px; font-weight:400; margin-bottom:10px; }
+.cscreen > p { color:var(--muted); font-size:14px; line-height:1.7; margin-bottom:36px; }
+.srow { display:flex; gap:22px; margin-bottom:32px; }
+.sbox { background:var(--navy2); border-radius:14px; padding:18px 26px; text-align:center; }
+.snum { font-size:27px; font-weight:300; color:var(--gold2); }
+.slbl { font-size:12px; color:var(--muted); margin-top:3px; }
+.streakline { font-size:14px; color:var(--muted); margin-bottom:26px; }
+
+/* ── SETTINGS PANEL ── */
+.settings-panel { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:300; display:none; align-items:flex-end; justify-content:center; }
+.settings-panel.open { display:flex; }
+.settings-sheet { background:var(--navy2); border-radius:24px 24px 0 0; padding:24px 24px 48px; width:100%; max-width:390px; animation:slideUp .3s cubic-bezier(.34,1.56,.64,1); max-height:90vh; overflow-y:auto; }
+.sheet-handle { width:36px; height:4px; background:rgba(255,255,255,.15); border-radius:2px; margin:0 auto 22px; }
+.sheet-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:400; margin-bottom:22px; }
+.settings-section { margin-bottom:26px; }
+.settings-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:12px; }
+
+/* theme swatches */
+.theme-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:9px; }
+.theme-swatch { aspect-ratio:1; border-radius:12px; cursor:pointer; border:2px solid transparent; transition:all .2s; display:flex; align-items:center; justify-content:center; }
+.theme-swatch.active { border-color:rgba(255,255,255,.8); }
+.sw-check { opacity:0; transition:opacity .2s; }
+.theme-swatch.active .sw-check { opacity:1; }
+
+/* toggles */
+.toggle-row { display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid rgba(255,255,255,.07); }
+.toggle-row:last-child { border-bottom:none; }
+.toggle-label { font-size:14px; }
+.toggle-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+.tog { width:44px; height:26px; border-radius:13px; background:var(--navy4); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+.tog.on { background:var(--gold); }
+.tog-thumb { width:20px; height:20px; background:#fff; border-radius:50%; position:absolute; top:3px; left:3px; transition:transform .2s; }
+.tog.on .tog-thumb { transform:translateX(18px); }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- OVERLAY for dropdown -->
+  <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+  <!-- DROPDOWN MENU -->
+  <div class="dropdown" id="dropdown">
+    <div class="dd-name" id="dd-username">👋 Hey there</div>
+    <div class="dd-sep"></div>
+    <div class="dd-item" onclick="openSettings()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="white" stroke-width="1.4"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.1 3.1l1.06 1.06M11.84 11.84l1.06 1.06M3.1 12.9l1.06-1.06M11.84 4.16l1.06-1.06" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Settings
+    </div>
+    <div class="dd-sep"></div>
+    <div class="dd-item danger" onclick="signOut()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10.5 11l3.5-3-3.5-3M14 8H6" stroke="#f07070" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Sign Out
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ ONBOARDING ══════════════════════════════ -->
+  <div class="screen active" id="s-onboard">
+    <div class="onboard">
+      <div class="ob-sun">
+        <svg width="80" height="64" viewBox="0 0 80 64" fill="none">
+          <path d="M40 10C26 10 16 20 16 32C16 44 26 52 40 52C54 52 64 44 64 32C64 20 54 10 40 10Z" fill="var(--gold)" opacity=".88"/>
+          <line x1="8" y1="34" x2="72" y2="34" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" opacity=".5"/>
+          <line x1="40" y1="1" x2="40" y2="6" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="14" y1="10" x2="18" y2="14" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" opacity=".6"/>
+          <line x1="66" y1="10" x2="62" y2="14" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" opacity=".6"/>
+          <line x1="4" y1="26" x2="9" y2="26" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" opacity=".4"/>
+          <line x1="76" y1="26" x2="71" y2="26" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" opacity=".4"/>
+        </svg>
+      </div>
+      <h1>First 10</h1>
+      <p class="tagline">Start your day right.</p>
+      <p class="sub">10 minutes. Once a day. That's it.</p>
+      <div class="ob-label">What's your name?</div>
+      <input class="ob-input" id="ob-name" type="text" placeholder="Enter your name" maxlength="30" autocomplete="off" onkeydown="if(event.key==='Enter')startApp()">
+      <button class="cta" style="margin:0;width:100%" onclick="startApp()">
+        Begin My Ritual
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2.5l5 5-5 5M2.5 7.5H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <p class="ob-foot">Your morning ritual awaits.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ HOME ══════════════════════════════ -->
+  <div class="screen" id="s-home">
+    <div class="top-bar">
+      <div class="hamburger" id="ham" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+      <svg width="30" height="22" viewBox="0 0 30 22" fill="none">
+        <path d="M15 2C10.5 2 7 5.8 7 10C7 14.2 10.5 17 15 17C19.5 17 23 14.2 23 10C23 5.8 19.5 2 15 2Z" fill="var(--gold)" opacity=".88"/>
+        <line x1="4" y1="15" x2="26" y2="15" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="1" y1="19" x2="29" y2="19" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+        <line x1="15" y1="0" x2="15" y2="1.5" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity=".6"/>
+        <line x1="3" y1="5" x2="5" y2="7" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+        <line x1="27" y1="5" x2="25" y2="7" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+      </svg>
+      <div style="width:22px"></div>
+    </div>
+
+    <div class="greeting">
+      <h1 id="greeting-h1">Good morning.</h1>
+      <p>Let's make it a great day.</p>
+    </div>
+
+    <div class="cards">
+      <!-- 1 Check In -->
+      <div class="step-card" id="c1" onclick="go('s-checkin')">
+        <div class="step-head">
+          <div class="step-left">
+            <div class="step-num">1</div>
+            <div class="step-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="var(--gold2)" stroke-width="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="var(--gold2)" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <span class="step-title">Check In</span>
+          </div>
+          <div class="check-ring" id="ck1"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-4.5" stroke="#4caf7d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="step-details" id="d1" style="display:none">
+          <div class="dr">
+            <div class="di"><label>Sleep</label><span id="sleep-disp">😴 Good</span></div>
+            <div class="di"><label>Energy</label><span id="e-disp">⚡ 7/10</span></div>
+            <div class="di"><label>Mood</label><span id="m-disp">🙂 8/10</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- 2 Focus -->
+      <div class="step-card" id="c2" onclick="go('s-focus')">
+        <div class="step-head">
+          <div class="step-left">
+            <div class="step-num">2</div>
+            <div class="step-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="var(--gold2)" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="var(--gold2)"/></svg></div>
+            <span class="step-title">Set Your Focus</span>
+          </div>
+          <div class="check-ring" id="ck2"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-4.5" stroke="#4caf7d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="step-details" id="d2" style="display:none">
+          <div class="gl">Main Goal</div><div class="gv" id="disp-main">—</div>
+          <div class="gl">Personal Goal</div><div class="gv" id="disp-per">—</div>
+          <div class="gl">Grateful For</div><div class="gv" id="disp-grat" style="margin-bottom:0">—</div>
+        </div>
+      </div>
+      <!-- 3 Mind Reset -->
+      <div class="step-card" id="c3" onclick="go('s-mind')">
+        <div class="step-head">
+          <div class="step-left">
+            <div class="step-num" style="background:transparent;border:none;font-size:16px">🌿</div>
+            <div class="step-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3C7 3 3 7 3 13s4 9 9 9 9-4 9-9-4-10-9-10z" stroke="var(--gold2)" stroke-width="2"/></svg></div>
+            <span class="step-title">Mind Reset</span>
+          </div>
+          <div class="check-ring" id="ck3"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-4.5" stroke="#4caf7d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="step-details" id="d3" style="display:none">
+          <div class="mr">
+            <div><div style="font-size:14px;font-weight:500">2 min breathing</div><div style="font-size:13px;color:var(--muted);margin-top:2px">Focus · Calm · Center</div></div>
+            <button class="play" onclick="event.stopPropagation();go('s-mind')"><svg width="11" height="13" viewBox="0 0 11 13" fill="none"><path d="M1.5 1l8 5.5-8 5.5V1z" fill="var(--gold)"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <!-- 4 Build Momentum -->
+      <div class="step-card" id="c4" onclick="go('s-momentum')">
+        <div class="step-head">
+          <div class="step-left">
+            <div class="step-num" style="background:transparent;border:none;font-size:16px">⚡</div>
+            <div class="step-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" stroke="var(--gold2)" stroke-width="2" stroke-linejoin="round"/></svg></div>
+            <span class="step-title">Build Momentum</span>
+          </div>
+          <div class="check-ring" id="ck4"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-4.5" stroke="#4caf7d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="step-details" id="d4" style="display:none">
+          <div class="mr"><div><div style="font-size:12px;color:var(--muted)">Top 3 Priorities</div><div style="font-size:14px;font-weight:500;margin-top:2px">View your plan</div></div><span class="tbadge">3 tasks</span></div>
+        </div>
+      </div>
+      <!-- 5 Lock In -->
+      <div class="step-card" id="c5" onclick="go('s-lockin')">
+        <div class="step-head">
+          <div class="step-left">
+            <div class="step-num" style="background:transparent;border:none;font-size:16px">🔒</div>
+            <div class="step-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="var(--gold2)" stroke-width="2"/><path d="M8 11V7a4 4 0 018 0v4" stroke="var(--gold2)" stroke-width="2"/></svg></div>
+            <span class="step-title">Lock In</span>
+          </div>
+          <div class="check-ring" id="ck5"><svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5 4.5-4.5" stroke="#4caf7d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="step-details" id="d5" style="display:none">
+          <div style="font-size:13px;color:var(--muted)">You've got this, let's go.</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="cta" id="home-cta" onclick="go('s-checkin')">
+      Begin Morning Ritual
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2.5l5 5-5 5M2.5 7.5H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════ CHECK IN ══════════════════════════════ -->
+  <div class="screen" id="s-checkin">
+    <div class="dsh">
+      <button class="back" onclick="back()"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M10 3L5 7.5 10 12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      <h2>Check In</h2>
+    </div>
+    <div class="sp" style="flex:1">
+      <p class="hint">How are you showing up today?</p>
+      <div class="fl">Sleep quality</div>
+      <div class="mg">
+        <div class="mc" onclick="pickSleep(this,'😩 Poor')"><div class="em">😩</div><div class="lbl">Poor</div></div>
+        <div class="mc sel" onclick="pickSleep(this,'😴 Good')"><div class="em">😴</div><div class="lbl">Good</div></div>
+        <div class="mc" onclick="pickSleep(this,'✨ Great')"><div class="em">✨</div><div class="lbl">Great</div></div>
+      </div>
+      <div class="slsec">
+        <div class="sllbl"><span>Energy Level</span><strong id="ev">7</strong></div>
+        <input type="range" min="1" max="10" value="7" step="1" oninput="document.getElementById('ev').textContent=this.value;document.getElementById('e-disp').textContent='⚡ '+this.value+'/10'">
+      </div>
+      <div class="slsec">
+        <div class="sllbl"><span>Mood</span><strong id="mv">8</strong></div>
+        <input type="range" min="1" max="10" value="8" step="1" oninput="document.getElementById('mv').textContent=this.value;document.getElementById('m-disp').textContent='🙂 '+this.value+'/10'">
+      </div>
+    </div>
+    <button class="cta" onclick="complete(1,'s-focus')">Save &amp; Continue →</button>
+  </div>
+
+  <!-- ══════════════════════════════ FOCUS ══════════════════════════════ -->
+  <div class="screen" id="s-focus">
+    <div class="dsh">
+      <button class="back" onclick="back()"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M10 3L5 7.5 10 12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      <h2>Set Your Focus</h2>
+    </div>
+    <div class="sp" style="flex:1">
+      <p class="hint">Define what matters most today.</p>
+      <div class="fl">Main goal for today</div>
+      <input class="ti" id="inp-main" placeholder="What must get done today?">
+      <div class="fl">Personal goal</div>
+      <input class="ti" id="inp-per" placeholder="Something for you...">
+      <div class="fl">I'm grateful for...</div>
+      <input class="ti" id="inp-grat" placeholder="Name something...">
+    </div>
+    <button class="cta" onclick="saveFocus()">Lock In Focus →</button>
+  </div>
+
+  <!-- ══════════════════════════════ MIND RESET ══════════════════════════════ -->
+  <div class="screen" id="s-mind">
+    <div class="dsh">
+      <button class="back" onclick="back();stopBreath()"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M10 3L5 7.5 10 12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      <h2>Mind Reset</h2>
+    </div>
+    <div class="sp" style="flex:1">
+      <p class="hint">Breathe. Center yourself.</p>
+      <div class="bwrap">
+        <div class="bring">
+          <div class="binner">
+            <div class="btext" id="blbl">Breathe In</div>
+            <div class="bnum" id="bnum">4</div>
+          </div>
+        </div>
+        <div class="binst">Inhale 4 · Hold 4 · Exhale 4<br><span style="color:rgba(255,255,255,.28);font-size:12px">Box breathing · Focus · Calm · Center</span></div>
+      </div>
+      <div class="modes">
+        <div class="mcard sel" onclick="selMode(this)"><div class="mi">🧘</div><div class="mt">Breathe</div><div class="ms">2 min</div></div>
+        <div class="mcard" onclick="selMode(this)"><div class="mi">📔</div><div class="mt">Reflect</div><div class="ms">2 min</div></div>
+        <div class="mcard" onclick="selMode(this)"><div class="mi">💡</div><div class="mt">Inspire</div><div class="ms">1 min</div></div>
+      </div>
+    </div>
+    <button class="cta" onclick="complete(3,'s-momentum');stopBreath()">Complete Reset →</button>
+  </div>
+
+  <!-- ══════════════════════════════ MOMENTUM ══════════════════════════════ -->
+  <div class="screen" id="s-momentum">
+    <div class="dsh">
+      <button class="back" onclick="back()"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M10 3L5 7.5 10 12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      <h2>Build Momentum</h2>
+    </div>
+    <div class="sp" style="flex:1">
+      <p class="hint">Your top 3 priorities for today.</p>
+      <div class="ti2" onclick="tgl(this)">
+        <div class="tcheck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2.5 4-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="ttext">Review product roadmap</span><span class="ptag">High</span>
+      </div>
+      <div class="ti2" onclick="tgl(this)">
+        <div class="tcheck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2.5 4-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="ttext">30-min workout session</span><span class="ptag">High</span>
+      </div>
+      <div class="ti2" onclick="tgl(this)">
+        <div class="tcheck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2.5 4-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="ttext">Team call at 2pm</span><span class="ptag">Med</span>
+      </div>
+      <div style="margin-top:18px;background:var(--navy2);border-radius:14px;padding:15px 16px;border:1px solid rgba(255,255,255,.06)">
+        <div style="font-size:11px;color:rgba(255,255,255,.32);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Daily habit</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:15px">🔥 Read for 20 minutes</span>
+          <span style="font-size:12px;color:var(--gold2);opacity:.85">14-day streak</span>
+        </div>
+      </div>
+    </div>
+    <button class="cta" onclick="complete(4,'s-lockin')">Plan Locked →</button>
+  </div>
+
+  <!-- ══════════════════════════════ LOCK IN ══════════════════════════════ -->
+  <div class="screen" id="s-lockin">
+    <div class="dsh">
+      <button class="back" onclick="back()"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M10 3L5 7.5 10 12" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      <h2>Lock In</h2>
+    </div>
+    <div class="sp" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" style="margin-bottom:26px">
+        <circle cx="40" cy="40" r="36" stroke="rgba(255,255,255,.1)" stroke-width="1.5"/>
+        <rect x="25" y="38" width="30" height="22" rx="4" fill="rgba(255,255,255,.05)" stroke="var(--gold)" stroke-width="1.5"/>
+        <path d="M30 38v-8a10 10 0 0120 0v8" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="40" cy="49" r="3" fill="var(--gold)"/>
+      </svg>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;margin-bottom:9px">You're set for today.</h3>
+      <p style="font-size:14px;color:var(--muted);line-height:1.7;max-width:250px;margin:0 auto 26px">Your mind is clear, your priorities are set. Go live your day with intention.</p>
+      <div class="libox">
+        <div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:8px">Today's main focus</div>
+        <div style="font-size:15px;font-weight:500;color:var(--gold2)" id="li-main">—</div>
+      </div>
+      <div class="listats">
+        <div class="listat"><div class="n">7</div><div class="l">Day streak</div></div>
+        <div class="listat"><div class="n">10</div><div class="l">Min used</div></div>
+        <div class="listat"><div class="n">5/5</div><div class="l">Steps done</div></div>
+      </div>
+    </div>
+    <button class="cta" onclick="complete(5,'s-done')">Lock In &amp; Start My Day</button>
+  </div>
+
+  <!-- ══════════════════════════════ DONE ══════════════════════════════ -->
+  <div class="screen cscreen" id="s-done">
+    <svg class="csun" viewBox="0 0 100 80" fill="none">
+      <path d="M50 12C34 12 22 24 22 40C22 56 34 66 50 66C66 66 78 56 78 40C78 24 66 12 50 12Z" fill="var(--gold)" opacity=".82"/>
+      <line x1="10" y1="42" x2="90" y2="42" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+      <ellipse cx="50" cy="72" rx="44" ry="4" fill="rgba(255,255,255,.05)"/>
+      <line x1="50" y1="1" x2="50" y2="7" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
+      <line x1="19" y1="14" x2="23" y2="18" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+      <line x1="81" y1="14" x2="77" y2="18" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+    </svg>
+    <h1 id="done-h1">You're locked in.</h1>
+    <p>One intentional start. Every day.<br>A better you.</p>
+    <div class="srow">
+      <div class="sbox"><div class="snum">7</div><div class="slbl">Day streak</div></div>
+      <div class="sbox"><div class="snum">10<span style="font-size:14px">min</span></div><div class="slbl">Invested</div></div>
+    </div>
+    <p class="streakline">See you tomorrow. Keep the streak alive. 🔥</p>
+    <button class="cta" style="width:auto;padding:15px 30px" onclick="resetDemo()">Start Over (Demo)</button>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════ SETTINGS PANEL ══════════════════════════════ -->
+<div class="settings-panel" id="settings-panel" onclick="panelBgClick(event)">
+  <div class="settings-sheet" id="settings-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Settings</div>
+
+    <div class="settings-section">
+      <div class="settings-label">Your Name</div>
+      <input class="ti" id="set-name" placeholder="Your name" style="margin-bottom:0" oninput="updateName(this.value)">
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Color Theme</div>
+      <div class="theme-grid">
+        <div class="theme-swatch active" data-theme="gold" onclick="setTheme('gold',this)" style="background:linear-gradient(135deg,#0f1b2d 50%,#c9a84c 50%)">
+          <svg class="sw-check" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5 6.5-6.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="theme-swatch" data-theme="rose" onclick="setTheme('rose',this)" style="background:linear-gradient(135deg,#1f0d12 50%,#e07a8a 50%)">
+          <svg class="sw-check" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5 6.5-6.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="theme-swatch" data-theme="forest" onclick="setTheme('forest',this)" style="background:linear-gradient(135deg,#0b1a10 50%,#5cad6e 50%)">
+          <svg class="sw-check" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5 6.5-6.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="theme-swatch" data-theme="slate" onclick="setTheme('slate',this)" style="background:linear-gradient(135deg,#111418 50%,#7b9fc7 50%)">
+          <svg class="sw-check" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5 6.5-6.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="theme-swatch" data-theme="amethyst" onclick="setTheme('amethyst',this)" style="background:linear-gradient(135deg,#140d1f 50%,#a07ad4 50%)">
+          <svg class="sw-check" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5 6.5-6.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Preferences</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Daily reminder</div><div class="toggle-sub">Notify me every morning</div></div>
+        <div class="tog on" data-pref="dailyReminder" onclick="togglePref(this)"><div class="tog-thumb"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Breathing sounds</div><div class="toggle-sub">Ambient audio during reset</div></div>
+        <div class="tog" data-pref="breathingSounds" onclick="togglePref(this)"><div class="tog-thumb"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Streak protection</div><div class="toggle-sub">Freeze streak once a week</div></div>
+        <div class="tog on" data-pref="streakProtection" onclick="togglePref(this)"><div class="tog-thumb"></div></div>
+      </div>
+    </div>
+
+    <button class="cta" style="margin:0;width:100%" onclick="closeSettings()">Done</button>
+  </div>
+</div>
+
+<script>
+let cur='s-onboard', prev='s-onboard';
+const doneSteps={};
+let bt=null, userName='';
+let activeTheme='gold';
+const PREF_KEY='first10-prefs';
+const NAME_KEY='first10-name';
+const THEME_KEY='first10-theme';
+
+/* ── ONBOARDING ── */
+function startApp(){
+  const n=document.getElementById('ob-name').value.trim();
+  if(!n){ document.getElementById('ob-name').style.borderColor='var(--gold)'; document.getElementById('ob-name').focus(); return; }
+  userName=n;
+  localStorage.setItem(NAME_KEY,userName);
+  document.getElementById('dd-username').textContent='👋 Hey, '+n;
+  document.getElementById('set-name').value=n;
+  setGreeting(n);
+  go('s-home');
+}
+function setGreeting(name){
+  const h=new Date().getHours();
+  const p=h<12?'morning':h<17?'afternoon':'evening';
+  document.getElementById('greeting-h1').textContent='Good '+p+', '+name+'.';
+}
+function updateName(v){
+  if(v.trim()){
+    userName=v.trim();
+    localStorage.setItem(NAME_KEY,userName);
+    setGreeting(userName);
+    document.getElementById('dd-username').textContent='👋 Hey, '+userName;
+  }
+}
+
+/* ── NAVIGATION ── */
+function go(id){
+  document.getElementById(cur).classList.remove('active');
+  prev=cur; cur=id;
+  document.getElementById(id).classList.add('active');
+  if(id==='s-mind') startBreath();
+}
+function back(){
+  document.getElementById(cur).classList.remove('active');
+  cur=prev; document.getElementById(cur).classList.add('active');
+}
+
+/* ── CHECK IN ── */
+function pickSleep(el,val){
+  el.closest('.mg').querySelectorAll('.mc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('sleep-disp').textContent=val;
+}
+
+/* ── STEP COMPLETE ── */
+function complete(n,nxt){
+  doneSteps[n]=true;
+  document.getElementById('c'+n).classList.add('done');
+  const d=document.getElementById('d'+n); if(d) d.style.display='block';
+  const cnt=Object.keys(doneSteps).length;
+  const btn=document.getElementById('home-cta');
+  if(cnt===5) btn.innerHTML='See you tomorrow. ☀️';
+  else btn.innerHTML='Continue ('+cnt+'/5 done) →';
+  go(nxt);
+}
+
+/* ── FOCUS ── */
+function saveFocus(){
+  const main=document.getElementById('inp-main').value.trim()||'My main goal';
+  const per=document.getElementById('inp-per').value.trim()||'Personal growth';
+  const grat=document.getElementById('inp-grat').value.trim()||'Today';
+  document.getElementById('disp-main').textContent=main;
+  document.getElementById('disp-per').textContent=per;
+  document.getElementById('disp-grat').textContent=grat;
+  document.getElementById('li-main').textContent=main;
+  complete(2,'s-mind');
+}
+
+/* ── MODES & TASKS ── */
+function selMode(el){ el.closest('.modes').querySelectorAll('.mcard').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function tgl(el){ el.classList.toggle('done'); }
+
+/* ── BREATHING ── */
+const phases=[{lbl:'Breathe In',n:4},{lbl:'Hold',n:4},{lbl:'Breathe Out',n:4},{lbl:'Hold',n:4}];
+let ph=0,bc=4;
+function startBreath(){ ph=0;bc=4;stopBreath();upBreath(); bt=setInterval(()=>{ bc--;if(bc<=0){ph=(ph+1)%4;bc=phases[ph].n;}upBreath(); },1000); }
+function stopBreath(){ if(bt){clearInterval(bt);bt=null;} }
+function upBreath(){ const l=document.getElementById('blbl'),n=document.getElementById('bnum'); if(l)l.textContent=phases[ph].lbl;if(n)n.textContent=bc; }
+
+/* ── MENU ── */
+function toggleMenu(){
+  const dd=document.getElementById('dropdown'),ham=document.getElementById('ham'),ov=document.getElementById('overlay');
+  const open=dd.classList.contains('open');
+  dd.classList.toggle('open'); ham.classList.toggle('open'); ov.classList.toggle('on');
+}
+function closeMenu(){ document.getElementById('dropdown').classList.remove('open'); document.getElementById('ham').classList.remove('open'); document.getElementById('overlay').classList.remove('on'); }
+
+/* ── SETTINGS ── */
+function openSettings(){ closeMenu(); document.getElementById('set-name').value=userName; document.getElementById('settings-panel').classList.add('open'); }
+function closeSettings(){ document.getElementById('settings-panel').classList.remove('open'); }
+function panelBgClick(e){ if(e.target===document.getElementById('settings-panel')) closeSettings(); }
+function togglePref(el){
+  el.classList.toggle('on');
+  const prefs=loadPrefs();
+  prefs[el.dataset.pref]=el.classList.contains('on');
+  savePrefs(prefs);
+}
+
+/* ── SIGN OUT ── */
+function signOut(){
+  closeMenu();
+  if(!confirm('Sign out and return to the welcome screen?')) return;
+  localStorage.removeItem(NAME_KEY);
+  Object.keys(doneSteps).forEach(k=>delete doneSteps[k]);
+  for(let i=1;i<=5;i++){ document.getElementById('c'+i).classList.remove('done'); const d=document.getElementById('d'+i);if(d)d.style.display='none'; }
+  document.getElementById('home-cta').innerHTML='Begin Morning Ritual <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2.5l5 5-5 5M2.5 7.5H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  document.getElementById('ob-name').value=''; userName=''; stopBreath();
+  document.getElementById(cur).classList.remove('active'); cur='s-onboard'; prev='s-onboard';
+  document.getElementById('s-onboard').classList.add('active');
+}
+
+/* ── RESET (demo) ── */
+function resetDemo(){
+  Object.keys(doneSteps).forEach(k=>delete doneSteps[k]);
+  for(let i=1;i<=5;i++){ document.getElementById('c'+i).classList.remove('done'); const d=document.getElementById('d'+i);if(d)d.style.display='none'; }
+  document.getElementById('home-cta').innerHTML='Begin Morning Ritual <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2.5l5 5-5 5M2.5 7.5H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  stopBreath(); go('s-home');
+}
+
+/* ── THEMES ── */
+function setTheme(theme, el){
+  const targets=[document.getElementById('app'), document.body, document.getElementById('settings-panel'), document.getElementById('settings-sheet')];
+  targets.forEach(t=>{ t.removeAttribute('data-theme'); if(theme!=='gold') t.setAttribute('data-theme',theme); });
+  document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  activeTheme=theme;
+  localStorage.setItem(THEME_KEY,theme);
+}
+function loadPrefs(){
+  try{
+    return JSON.parse(localStorage.getItem(PREF_KEY)) || {};
+  }catch(_){
+    return {};
+  }
+}
+function savePrefs(prefs){
+  localStorage.setItem(PREF_KEY,JSON.stringify(prefs));
+}
+function applySavedTheme(){
+  const theme=localStorage.getItem(THEME_KEY)||'gold';
+  const swatch=document.querySelector(`.theme-swatch[data-theme="${theme}"]`) || document.querySelector('.theme-swatch[data-theme="gold"]');
+  if(swatch) setTheme(theme,swatch);
+}
+function applySavedPrefs(){
+  const prefs=loadPrefs();
+  document.querySelectorAll('.tog[data-pref]').forEach(t=>{
+    const key=t.dataset.pref;
+    if(typeof prefs[key]==='boolean'){
+      t.classList.toggle('on',prefs[key]);
+    }
+  });
+}
+function initApp(){
+  applySavedTheme();
+  applySavedPrefs();
+  const savedName=(localStorage.getItem(NAME_KEY)||'').trim();
+  if(savedName){
+    userName=savedName;
+    document.getElementById('ob-name').value=savedName;
+    document.getElementById('set-name').value=savedName;
+    document.getElementById('dd-username').textContent='👋 Hey, '+savedName;
+    setGreeting(savedName);
+    document.getElementById('s-onboard').classList.remove('active');
+    cur='s-home';
+    prev='s-home';
+    document.getElementById('s-home').classList.add('active');
+  }
+}
+initApp();
+</script>
+</body>
+</html>
