@@ -199,6 +199,44 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
 .tog-thumb { width:20px; height:20px; background:#fff; border-radius:50%; position:absolute; top:3px; left:3px; transition:transform .2s; }
 .tog.on .tog-thumb { transform:translateX(18px); }
 
+.cta.secondary { background:transparent; color:var(--gold2); border:1.5px solid rgba(255,255,255,.22); margin-top:10px; }
+.cta.secondary:hover { background:rgba(255,255,255,.06); filter:none; }
+
+/* ── TODAY SUMMARY (locked) ── */
+.today-sum { margin:0 16px 14px; background:var(--navy2); border-radius:16px; padding:16px 18px; border:1px solid rgba(255,255,255,.08); text-align:left; }
+.today-sum h3 { font-family:'Playfair Display',serif; font-size:18px; font-weight:400; margin-bottom:10px; color:var(--gold2); }
+.sum-row { font-size:13px; color:var(--muted); margin-bottom:6px; }
+.sum-row strong { color:#fff; font-weight:500; margin-left:6px; }
+.sum-pri { font-size:14px; color:#fff; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.07); display:flex; align-items:flex-start; gap:10px; }
+.sum-pri:last-child { border-bottom:none; padding-bottom:0; }
+.sum-pri .dot { width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:6px; opacity:.85; }
+.sum-pri.done span { opacity:.45; text-decoration:line-through; }
+
+/* ── MOMENTUM EDITABLE ── */
+.mom-task { cursor:default; flex-wrap:nowrap; }
+.mom-task .tcheck { cursor:pointer; }
+.mom-task .mom-inp { flex:1; min-width:0; margin-bottom:0; padding:10px 12px; font-size:15px; background:transparent; border:none; border-radius:8px; color:#fff; }
+.mom-task .mom-inp:focus { outline:1px solid rgba(255,255,255,.2); background:rgba(0,0,0,.12); }
+.mom-task .mom-tag { margin-bottom:0; padding:6px 8px; font-size:11px; border-radius:8px; background:var(--navy3); color:var(--gold2); border:1px solid rgba(255,255,255,.1); cursor:pointer; font-family:'DM Sans',sans-serif; flex-shrink:0; max-width:32%; }
+
+/* ── CALENDAR PANEL ── */
+.calendar-panel { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:320; display:none; align-items:flex-end; justify-content:center; }
+.calendar-panel.open { display:flex; }
+.calendar-sheet { background:var(--navy2); border-radius:24px 24px 0 0; padding:24px 24px calc(env(safe-area-inset-bottom, 0px) + 32px); width:100%; max-width:430px; animation:slideUp .3s cubic-bezier(.34,1.56,.64,1); max-height:92vh; overflow-y:auto; }
+.cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.cal-nav button { background:var(--navy3); border:1px solid rgba(255,255,255,.1); color:#fff; width:38px; height:38px; border-radius:10px; cursor:pointer; font-size:16px; }
+.cal-nav h4 { font-family:'Playfair Display',serif; font-size:18px; font-weight:400; }
+.cal-grid-head { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px; text-align:center; font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; }
+.cal-grid-days { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+.cal-cell { aspect-ratio:1; max-height:42px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); font-size:12px; color:var(--dim); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1px; padding:2px; -webkit-appearance:none; appearance:none; font-family:inherit; }
+.cal-cell.empty { background:transparent; border:none; cursor:default; }
+.cal-cell.has { border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.06); font-weight:500; color:#fff; }
+.cal-cell.locked::after { content:''; width:4px; height:4px; border-radius:50%; background:var(--green); }
+.cal-detail { margin-top:16px; background:var(--navy3); border-radius:14px; padding:14px 16px; border:1px solid rgba(255,255,255,.07); font-size:13px; color:var(--muted); display:none; }
+.cal-detail.visible { display:block; }
+.cal-detail div { margin-bottom:8px; }
+.cal-detail strong { color:var(--gold2); font-weight:500; margin-right:6px; }
+
 @media (max-width: 360px) {
   .onboard { padding:30px 20px; }
   .greeting { padding:6px 18px 22px; }
@@ -220,6 +258,11 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
   <!-- DROPDOWN MENU -->
   <div class="dropdown" id="dropdown">
     <div class="dd-name" id="dd-username">👋 Hey there</div>
+    <div class="dd-sep"></div>
+    <div class="dd-item" onclick="openCalendar()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="3.5" width="11" height="11" rx="1.5" stroke="white" stroke-width="1.3"/><path d="M2.5 6.5h11M6 2v3M10 2v3" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Daily log
+    </div>
     <div class="dd-sep"></div>
     <div class="dd-item" onclick="openSettings()">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.2" stroke="white" stroke-width="1.4"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.1 3.1l1.06 1.06M11.84 11.84l1.06 1.06M3.1 12.9l1.06-1.06M11.84 4.16l1.06-1.06" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
@@ -276,10 +319,20 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
 
     <div class="greeting">
       <h1 id="greeting-h1">Good morning.</h1>
-      <p>Let's make it a great day.</p>
+      <p id="greeting-sub">Let's make it a great day.</p>
     </div>
 
-    <div class="cards">
+    <div class="today-sum" id="home-locked-summary" style="display:none">
+      <h3 id="today-sum-title">Today's plan</h3>
+      <div class="sum-row">Check-in: <strong id="sum-checkin">—</strong></div>
+      <div class="sum-row">Focus: <strong id="sum-main">—</strong></div>
+      <div class="sum-row">Also: <strong id="sum-extra">—</strong></div>
+      <div style="font-size:11px;color:rgba(255,255,255,.32);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">Top 3 priorities</div>
+      <div id="sum-priorities"></div>
+      <button type="button" class="cta secondary" style="margin:14px 0 0;width:100%" onclick="enterEditToday()">Edit today's plan</button>
+    </div>
+
+    <div class="cards" id="home-flow-wrap">
       <!-- 1 Check In -->
       <div class="step-card" id="c1" onclick="go('s-checkin')">
         <div class="step-head">
@@ -365,6 +418,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
       Begin Morning Ritual
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2.5l5 5-5 5M2.5 7.5H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     </button>
+    <button type="button" class="cta secondary" id="home-done-edit" style="display:none;margin:-8px 16px 24px;width:calc(100% - 32px)" onclick="finishEditingLockedDay()">Done editing</button>
   </div>
 
   <!-- ══════════════════════════════ CHECK IN ══════════════════════════════ -->
@@ -383,11 +437,11 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
       </div>
       <div class="slsec">
         <div class="sllbl"><span>Energy Level</span><strong id="ev">7</strong></div>
-        <input type="range" min="1" max="10" value="7" step="1" oninput="document.getElementById('ev').textContent=this.value;document.getElementById('e-disp').textContent='⚡ '+this.value+'/10'">
+        <input type="range" id="rng-energy" min="1" max="10" value="7" step="1">
       </div>
       <div class="slsec">
         <div class="sllbl"><span>Mood</span><strong id="mv">8</strong></div>
-        <input type="range" min="1" max="10" value="8" step="1" oninput="document.getElementById('mv').textContent=this.value;document.getElementById('m-disp').textContent='🙂 '+this.value+'/10'">
+        <input type="range" id="rng-mood" min="1" max="10" value="8" step="1">
       </div>
     </div>
     <button class="cta" onclick="complete(1,'s-focus')">Save &amp; Continue →</button>
@@ -444,18 +498,21 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
       <h2>Build Momentum</h2>
     </div>
     <div class="sp" style="flex:1">
-      <p class="hint">Your top 3 priorities for today.</p>
-      <div class="ti2" onclick="tgl(this)">
-        <div class="tcheck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2.5 4-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <span class="ttext">Review product roadmap</span><span class="ptag">High</span>
+      <p class="hint">Your top 3 priorities for today (tap to edit).</p>
+      <div class="ti2 mom-task" data-pri-idx="0">
+        <div class="tcheck" onclick="event.stopPropagation();togglePriorityDone(0)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2.5 4-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <input class="mom-inp" type="text" maxlength="80" placeholder="Priority 1" aria-label="Priority 1" oninput="syncPriorityText(0,this.value)">
+        <select class="mom-tag" aria-label="Priority 1 tag" onchange="syncPriorityTag(0,this.value)"><option>High</option><option>Med</option><option>Low</option></select>
       </div>
-      <div class="ti2" onclick="tgl(this)">
-        <div class="tcheck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2.5 4-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <span class="ttext">30-min workout session</span><span class="ptag">High</span>
+      <div class="ti2 mom-task" data-pri-idx="1">
+        <div class="tcheck" onclick="event.stopPropagation();togglePriorityDone(1)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2.5 4-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <input class="mom-inp" type="text" maxlength="80" placeholder="Priority 2" aria-label="Priority 2" oninput="syncPriorityText(1,this.value)">
+        <select class="mom-tag" aria-label="Priority 2 tag" onchange="syncPriorityTag(1,this.value)"><option>High</option><option>Med</option><option>Low</option></select>
       </div>
-      <div class="ti2" onclick="tgl(this)">
-        <div class="tcheck"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2.5 4-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <span class="ttext">Team call at 2pm</span><span class="ptag">Med</span>
+      <div class="ti2 mom-task" data-pri-idx="2">
+        <div class="tcheck" onclick="event.stopPropagation();togglePriorityDone(2)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2.5 4-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <input class="mom-inp" type="text" maxlength="80" placeholder="Priority 3" aria-label="Priority 3" oninput="syncPriorityText(2,this.value)">
+        <select class="mom-tag" aria-label="Priority 3 tag" onchange="syncPriorityTag(2,this.value)"><option>High</option><option>Med</option><option>Low</option></select>
       </div>
       <div style="margin-top:18px;background:var(--navy2);border-radius:14px;padding:15px 16px;border:1px solid rgba(255,255,255,.06)">
         <div style="font-size:11px;color:rgba(255,255,255,.32);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Daily habit</div>
@@ -465,7 +522,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
         </div>
       </div>
     </div>
-    <button class="cta" onclick="complete(4,'s-lockin')">Plan Locked →</button>
+    <button class="cta" onclick="finishMomentum()">Plan Locked →</button>
   </div>
 
   <!-- ══════════════════════════════ LOCK IN ══════════════════════════════ -->
@@ -488,9 +545,9 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
         <div style="font-size:15px;font-weight:500;color:var(--gold2)" id="li-main">—</div>
       </div>
       <div class="listats">
-        <div class="listat"><div class="n">7</div><div class="l">Day streak</div></div>
+        <div class="listat"><div class="n" id="lock-streak">0</div><div class="l">Day streak</div></div>
         <div class="listat"><div class="n">10</div><div class="l">Min used</div></div>
-        <div class="listat"><div class="n">5/5</div><div class="l">Steps done</div></div>
+        <div class="listat"><div class="n" id="lock-steps">5/5</div><div class="l">Steps done</div></div>
       </div>
     </div>
     <button class="cta" onclick="complete(5,'s-done')">Lock In &amp; Start My Day</button>
@@ -509,13 +566,34 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; h
     <h1 id="done-h1">You're locked in.</h1>
     <p>One intentional start. Every day.<br>A better you.</p>
     <div class="srow">
-      <div class="sbox"><div class="snum">7</div><div class="slbl">Day streak</div></div>
+      <div class="sbox"><div class="snum" id="done-streak">0</div><div class="slbl">Day streak</div></div>
       <div class="sbox"><div class="snum">10<span style="font-size:14px">min</span></div><div class="slbl">Invested</div></div>
     </div>
     <p class="streakline">See you tomorrow. Keep the streak alive. 🔥</p>
     <button class="cta" style="width:auto;padding:15px 30px" onclick="resetDemo()">Start Over (Demo)</button>
   </div>
 
+</div>
+
+<!-- ══════════════════════════════ DAILY LOG / CALENDAR ══════════════════════════════ -->
+<div class="calendar-panel" id="calendar-panel" onclick="calendarBgClick(event)">
+  <div class="calendar-sheet" id="calendar-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" style="margin-bottom:14px">Daily log</div>
+    <p class="hint" style="margin-bottom:14px">Mood and energy for days you completed or saved check-ins.</p>
+    <div class="cal-nav">
+      <button type="button" aria-label="Previous month" onclick="calShift(-1)">‹</button>
+      <h4 id="cal-month-label">—</h4>
+      <button type="button" aria-label="Next month" onclick="calShift(1)">›</button>
+    </div>
+    <div class="cal-grid-head"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+    <div class="cal-grid-days" id="cal-grid-days"></div>
+    <div class="cal-detail" id="cal-detail">
+      <div><strong id="cal-d-date">—</strong></div>
+      <div id="cal-d-body">Tap a highlighted day.</div>
+    </div>
+    <button type="button" class="cta" style="margin:18px 0 0;width:100%" onclick="closeCalendar()">Close</button>
+  </div>
 </div>
 
 <!-- ══════════════════════════════ SETTINGS PANEL ══════════════════════════════ -->
@@ -575,9 +653,146 @@ let cur='s-onboard', prev='s-onboard';
 const doneSteps={};
 let bt=null, userName='';
 let activeTheme='gold';
+let editingLockedDay=false;
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+
 const PREF_KEY='first10-prefs';
 const NAME_KEY='first10-name';
 const THEME_KEY='first10-theme';
+const DAYS_KEY='first10-days';
+const STREAK_KEY='first10-streak';
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+function isoToday(){
+  const d=new Date();
+  return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+}
+function isoFromDate(d){ return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); }
+function parseISOLocal(iso){ const [y,m,d]=iso.split('-').map(Number); return new Date(y,m-1,d,12,0,0,0); }
+function daysBetweenISO(a,b){ return Math.round((parseISOLocal(b)-parseISOLocal(a))/86400000); }
+
+function loadPrefs(){
+  try{ return JSON.parse(localStorage.getItem(PREF_KEY))||{} }
+  catch(_){ return {} }
+}
+function savePrefs(prefs){ localStorage.setItem(PREF_KEY,JSON.stringify(prefs)); }
+
+function loadDays(){
+  try{ const j=JSON.parse(localStorage.getItem(DAYS_KEY)); return j && typeof j==='object'?j:{} }
+  catch(_){ return {} }
+}
+function saveDays(map){ localStorage.setItem(DAYS_KEY,JSON.stringify(map)); }
+
+function defaultPriorities(){
+  return [
+    {text:'Review product roadmap',tag:'High',done:false},
+    {text:'30-min workout session',tag:'High',done:false},
+    {text:'Team call at 2pm',tag:'Med',done:false}
+  ];
+}
+
+function defaultDayEntry(){ return {
+  locked:false,
+  sleep:'😴 Good',
+  energy:7,
+  mood:8,
+  main:'',
+  personal:'',
+  grateful:'',
+  priorities:defaultPriorities(),
+  stepsDone:[]
+}; }
+
+function cloneEntry(e){
+  return {
+    locked:!!e.locked,
+    sleep:e.sleep||'😴 Good',
+    energy:+e.energy||7,
+    mood:+e.mood||8,
+    main:e.main||'',
+    personal:e.personal||'',
+    grateful:e.grateful||'',
+    priorities:Array.isArray(e.priorities)?e.priorities.map(x=>({text:x.text||'',tag:x.tag||'Med',done:!!x.done})):defaultPriorities(),
+    stepsDone:Array.isArray(e.stepsDone)?e.stepsDone.slice():[]
+  };
+}
+
+function getTodayISO(){ return isoToday(); }
+
+function loadEntryFor(dateIso){
+  const days=loadDays();
+  const raw=days[dateIso];
+  if(!raw) return cloneEntry(defaultDayEntry());
+  return cloneEntry(raw);
+}
+
+function saveEntryFor(dateIso, entry){
+  const days=loadDays();
+  days[dateIso]=cloneEntry(entry);
+  saveDays(days);
+}
+
+function persistToday(entry){ saveEntryFor(getTodayISO(), entry); }
+
+function getTodayEntry(){ return loadEntryFor(getTodayISO()); }
+
+function moodEmoji(m){
+  const n=+m||5;
+  if(n<=3) return '😣';
+  if(n<=5) return '😐';
+  if(n<=7) return '🙂';
+  return '😄';
+}
+
+/* ── STREAK ── */
+function loadStreakMeta(){
+  try{ return JSON.parse(localStorage.getItem(STREAK_KEY))||{count:0,lastLock:null} }
+  catch(_){ return {count:0,lastLock:null} }
+}
+function saveStreakMeta(m){ localStorage.setItem(STREAK_KEY,JSON.stringify(m)); }
+
+function applyStreakOnLock(){
+  const today=getTodayISO();
+  const meta=loadStreakMeta();
+  if(meta.lastLock===today) return meta.count;
+  let next=1;
+  if(meta.lastLock){
+    const gap=daysBetweenISO(meta.lastLock,today);
+    if(gap===1) next=meta.count+1;
+    else next=1;
+  }
+  meta.count=next;
+  meta.lastLock=today;
+  saveStreakMeta(meta);
+  return meta.count;
+}
+
+function getStreakCount(){ return loadStreakMeta().count; }
+
+function refreshStreakUI(){
+  const n=getStreakCount();
+  const el=(id)=>document.getElementById(id);
+  if(el('lock-streak')) el('lock-streak').textContent=String(n);
+  if(el('done-streak')) el('done-streak').textContent=String(n);
+}
+
+/* ── GREETING (time of day) ── */
+function setGreeting(name){
+  const h=new Date().getHours();
+  let p='morning', sub="Let's make it a great day.";
+  if(h>=5 && h<12){ p='morning'; sub="Let's make it a great day."; }
+  else if(h>=12 && h<17){ p='afternoon'; sub="Hope your afternoon is focused and calm."; }
+  else if(h>=17 && h<22){ p='evening'; sub="Wind down with intention—tomorrow can wait."; }
+  else { p='night'; sub="Rest well. Your ritual will be here in the morning."; }
+  const nm=(name||'there').trim()||'there';
+  document.getElementById('greeting-h1').textContent='Good '+p+', '+nm+'.';
+  const subEl=document.getElementById('greeting-sub');
+  if(subEl) subEl.textContent=sub;
+}
+
+function refreshGreetingIfNamed(){
+  if(userName) setGreeting(userName);
+}
 
 /* ── ONBOARDING ── */
 function startApp(){
@@ -587,14 +802,11 @@ function startApp(){
   localStorage.setItem(NAME_KEY,userName);
   document.getElementById('dd-username').textContent='👋 Hey, '+n;
   document.getElementById('set-name').value=n;
+  applyDayToAppState(getTodayEntry());
   setGreeting(n);
   go('s-home');
 }
-function setGreeting(name){
-  const h=new Date().getHours();
-  const p=h<12?'morning':h<17?'afternoon':'evening';
-  document.getElementById('greeting-h1').textContent='Good '+p+', '+name+'.';
-}
+
 function updateName(v){
   if(v.trim()){
     userName=v.trim();
@@ -604,16 +816,206 @@ function updateName(v){
   }
 }
 
+/* ── HOME: locked vs flow ── */
+function updateHomeModeUI(){
+  const sum=document.getElementById('home-locked-summary');
+  const flow=document.getElementById('home-flow-wrap');
+  const cta=document.getElementById('home-cta');
+  const doneEdit=document.getElementById('home-done-edit');
+  const entry=getTodayEntry();
+  const isLocked=!!entry.locked;
+  const summaryMode=isLocked && !editingLockedDay;
+  const editLockedMode=isLocked && editingLockedDay;
+  if(flow) flow.style.flexDirection='column';
+  if(sum){ sum.style.display=summaryMode?'block':'none'; if(summaryMode) renderTodaySummary(entry); }
+  if(flow) flow.style.display=summaryMode?'none':'flex';
+  if(cta) cta.style.display=(summaryMode||editLockedMode)?'none':'flex';
+  if(doneEdit) doneEdit.style.display=editLockedMode?'flex':'none';
+}
+
+function renderTodaySummary(entry){
+  const sleep=entry.sleep||'—';
+  const en=entry.energy!=null?entry.energy:7;
+  const mo=entry.mood!=null?entry.mood:8;
+  document.getElementById('sum-checkin').textContent=sleep+' · Energy '+en+'/10 · Mood '+moodEmoji(mo)+' '+mo+'/10';
+  document.getElementById('sum-main').textContent=(entry.main||'—').trim()||'—';
+  const extra=[(entry.personal||'').trim(),(entry.grateful||'').trim()].filter(Boolean).join(' · ');
+  document.getElementById('sum-extra').textContent=extra||'—';
+  const box=document.getElementById('sum-priorities');
+  box.innerHTML='';
+  (entry.priorities||[]).forEach((p,i)=>{
+    const row=document.createElement('div');
+    row.className='sum-pri'+(p.done?' done':'');
+    row.innerHTML='<span class="dot"></span><span>'+(p.text||'Priority '+(i+1))+'</span> <span style="font-size:11px;color:var(--muted);margin-left:auto">'+escapeHtml(p.tag||'')+'</span>';
+    box.appendChild(row);
+  });
+}
+
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function enterEditToday(){
+  editingLockedDay=true;
+  updateHomeModeUI();
+}
+
+function exitEditToday(){
+  editingLockedDay=false;
+  updateHomeModeUI();
+}
+
+function finishEditingLockedDay(){
+  const e=getTodayEntry();
+  e.priorities=readPrioritiesFromDom();
+  persistToday(e);
+  syncDispFromEntry(e);
+  editingLockedDay=false;
+  updateHomeModeUI();
+}
+
 /* ── NAVIGATION ── */
 function go(id){
   document.getElementById(cur).classList.remove('active');
   prev=cur; cur=id;
   document.getElementById(id).classList.add('active');
   if(id==='s-mind') startBreath();
+  if(id==='s-checkin') hydrateCheckinFromEntry();
+  if(id==='s-focus') hydrateFocusFromEntry();
+  if(id==='s-momentum') hydrateMomentumFromEntry();
+  if(id==='s-lockin') updateLockSummaryUI();
 }
+
+function updateLockSummaryUI(){
+  const e=getTodayEntry();
+  const n=Object.keys(doneSteps).length;
+  const el=document.getElementById('lock-steps'); if(el) el.textContent=n+'/5';
+  refreshStreakUI();
+  const lm=document.getElementById('li-main'); if(lm) lm.textContent=(e.main||'My main goal').trim()||'My main goal';
+}
+
 function back(){
   document.getElementById(cur).classList.remove('active');
   cur=prev; document.getElementById(cur).classList.add('active');
+}
+
+/* ── Sync entry + UI ── */
+function hydrateCheckinFromEntry(){
+  const e=getTodayEntry();
+  const mg=document.querySelector('#s-checkin .mg');
+  if(!mg) return;
+  mg.querySelectorAll('.mc').forEach(c=>c.classList.remove('sel'));
+
+  const sleepStr=String(e.sleep||'😴 Good');
+  let sel=null;
+  mg.querySelectorAll('.mc').forEach(mc=>{
+    const label=(mc.querySelector('.lbl')||{}).textContent||'';
+    if(label==='Poor'&&sleepStr.includes('Poor')) sel=mc;
+    if(label==='Good'&&sleepStr.includes('Good')) sel=mc;
+    if(label==='Great'&&sleepStr.includes('Great')) sel=mc;
+  });
+  if(sel) sel.classList.add('sel');
+
+  const en=+e.energy||7, mo=+e.mood||8;
+  const re=document.getElementById('rng-energy'), rm=document.getElementById('rng-mood');
+  if(re){ re.value=String(en); }
+  if(rm){ rm.value=String(mo); }
+  document.getElementById('ev').textContent=String(en);
+  document.getElementById('mv').textContent=String(mo);
+  document.getElementById('e-disp').textContent='⚡ '+en+'/10';
+  document.getElementById('m-disp').textContent=moodEmoji(mo)+' '+mo+'/10';
+  document.getElementById('sleep-disp').textContent=e.sleep||'😴 Good';
+}
+
+function hydrateFocusFromEntry(){
+  const e=getTodayEntry();
+  document.getElementById('inp-main').value=e.main||'';
+  document.getElementById('inp-per').value=e.personal||'';
+  document.getElementById('inp-grat').value=e.grateful||'';
+}
+
+function hydrateMomentumFromEntry(){
+  const e=getTodayEntry();
+  const pr=e.priorities&&e.priorities.length?e.priorities:defaultPriorities();
+  document.querySelectorAll('.mom-task').forEach((row,i)=>{
+    const p=pr[i]||{text:'',tag:'Med',done:false};
+    const inp=row.querySelector('.mom-inp');
+    const sel=row.querySelector('.mom-tag');
+    if(inp) inp.value=p.text||'';
+    if(sel){ sel.value=(['High','Med','Low'].includes(p.tag)?p.tag:'Med'); }
+    row.classList.toggle('done',!!p.done);
+  });
+}
+
+function syncDispFromEntry(e){
+  document.getElementById('sleep-disp').textContent=e.sleep||'😴 Good';
+  document.getElementById('e-disp').textContent='⚡ '+e.energy+'/10';
+  document.getElementById('m-disp').textContent=moodEmoji(e.mood)+' '+e.mood+'/10';
+  document.getElementById('disp-main').textContent=(e.main||'—').trim()||'—';
+  document.getElementById('disp-per').textContent=(e.personal||'—').trim()||'—';
+  document.getElementById('disp-grat').textContent=(e.grateful||'—').trim()||'—';
+  document.getElementById('li-main').textContent=(e.main||'My main goal').trim()||'My main goal';
+  applyMomentumDetail(e);
+}
+
+function applyMomentumDetail(e){
+  const pr=e.priorities||[];
+  const d4=document.getElementById('d4');
+  if(!d4) return;
+  const lines=pr.map(p=>(p.text||'').trim()).filter(Boolean);
+  const sub=d4.querySelector('.mr div div:nth-child(2)');
+  if(sub){ sub.textContent=lines.slice(0,2).join(' · ')||(lines[0]||'Tap to edit priorities'); }
+  const bd=d4.querySelector('.tbadge');
+  if(bd) bd.textContent=(lines.length||0)+'/3 priorities';
+}
+
+function applyDayToAppState(entry){
+  mergeDoneStepsFromEntry(entry);
+  redrawStepCards();
+  syncDispFromEntry(entry);
+  hydrateMomentumFromEntry();
+  updateHomeModeUI();
+  refreshHomeCtaFromDone();
+}
+
+function mergeDoneStepsFromEntry(entry){
+  Object.keys(doneSteps).forEach(k=>delete doneSteps[k]);
+  (entry.stepsDone||[]).forEach(n=>{ doneSteps[+n]=true; });
+}
+
+function pushStepDone(stepNum){
+  const e=getTodayEntry();
+  const set=new Set([...(e.stepsDone||[])].map(Number));
+  set.add(+stepNum);
+  e.stepsDone=[...set].sort((a,b)=>a-b);
+  persistToday(e);
+  mergeDoneStepsFromEntry(e);
+}
+
+function redrawStepCards(){
+  for(let i=1;i<=5;i++){
+    const card=document.getElementById('c'+i);
+    if(!card) continue;
+    const has=!!doneSteps[i];
+    card.classList.toggle('done',has);
+    const d=document.getElementById('d'+i);
+    if(d) d.style.display=has?'block':'none';
+  }
+}
+
+function refreshHomeCtaFromDone(){
+  const cnt=Object.keys(doneSteps).length;
+  const btn=document.getElementById('home-cta');
+  if(!btn) return;
+  const entry=getTodayEntry();
+  if(entry.locked){ btn.style.display='none'; return; }
+  btn.style.display='flex';
+  if(cnt===5) btn.innerHTML='See you tomorrow. ☀️';
+  else btn.innerHTML='Continue ('+cnt+'/5 done) → '+homeCtaSvgPrefix();
+}
+
+function homeCtaSvgPrefix(){
+  return '<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2.5l5 5-5 5M2.5 7.5H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
 }
 
 /* ── CHECK IN ── */
@@ -621,17 +1023,46 @@ function pickSleep(el,val){
   el.closest('.mg').querySelectorAll('.mc').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
   document.getElementById('sleep-disp').textContent=val;
+  const e=getTodayEntry();
+  e.sleep=val;
+  persistToday(e);
+}
+
+function bindCheckinRanges(){
+  const re=document.getElementById('rng-energy');
+  const rm=document.getElementById('rng-mood');
+  if(re){
+    re.addEventListener('input',function(){
+      document.getElementById('ev').textContent=this.value;
+      document.getElementById('e-disp').textContent='⚡ '+this.value+'/10';
+      const e=getTodayEntry(); e.energy=+this.value; persistToday(e);
+    });
+  }
+  if(rm){
+    rm.addEventListener('input',function(){
+      document.getElementById('mv').textContent=this.value;
+      document.getElementById('m-disp').textContent=moodEmoji(this.value)+' '+this.value+'/10';
+      const e=getTodayEntry(); e.mood=+this.value; persistToday(e);
+    });
+  }
 }
 
 /* ── STEP COMPLETE ── */
 function complete(n,nxt){
   doneSteps[n]=true;
+  pushStepDone(n);
   document.getElementById('c'+n).classList.add('done');
   const d=document.getElementById('d'+n); if(d) d.style.display='block';
-  const cnt=Object.keys(doneSteps).length;
-  const btn=document.getElementById('home-cta');
-  if(cnt===5) btn.innerHTML='See you tomorrow. ☀️';
-  else btn.innerHTML='Continue ('+cnt+'/5 done) →';
+  if(n===5){
+    const e=getTodayEntry();
+    e.locked=true;
+    persistToday(e);
+    applyStreakOnLock();
+    refreshStreakUI();
+    editingLockedDay=false;
+    updateHomeModeUI();
+  }
+  refreshHomeCtaFromDone();
   go(nxt);
 }
 
@@ -640,16 +1071,58 @@ function saveFocus(){
   const main=document.getElementById('inp-main').value.trim()||'My main goal';
   const per=document.getElementById('inp-per').value.trim()||'Personal growth';
   const grat=document.getElementById('inp-grat').value.trim()||'Today';
-  document.getElementById('disp-main').textContent=main;
-  document.getElementById('disp-per').textContent=per;
-  document.getElementById('disp-grat').textContent=grat;
-  document.getElementById('li-main').textContent=main;
+  const e=getTodayEntry();
+  e.main=main; e.personal=per; e.grateful=grat;
+  persistToday(e);
+  syncDispFromEntry(e);
   complete(2,'s-mind');
 }
 
-/* ── MODES & TASKS ── */
+/* ── PRIORITIES ── */
+function readPrioritiesFromDom(){
+  const out=[];
+  document.querySelectorAll('.mom-task').forEach(row=>{
+    const inp=row.querySelector('.mom-inp');
+    const sel=row.querySelector('.mom-tag');
+    out.push({ text:(inp&&inp.value||'').trim(), tag:(sel&&sel.value)||'Med', done:row.classList.contains('done') });
+  });
+  return out;
+}
+
+function syncPriorityText(i,val){
+  const e=getTodayEntry();
+  if(!e.priorities[i]) e.priorities[i]={text:'',tag:'Med',done:false};
+  e.priorities[i].text=val;
+  persistToday(e);
+  syncDispFromEntry(e);
+}
+
+function syncPriorityTag(i,val){
+  const e=getTodayEntry();
+  if(!e.priorities[i]) e.priorities[i]={text:'',tag:'Med',done:false};
+  e.priorities[i].tag=val;
+  persistToday(e);
+  syncDispFromEntry(e);
+}
+
+function togglePriorityDone(i){
+  const row=document.querySelector('.mom-task[data-pri-idx="'+i+'"]');
+  if(row) row.classList.toggle('done');
+  const e=getTodayEntry();
+  e.priorities=readPrioritiesFromDom();
+  persistToday(e);
+}
+
+function finishMomentum(){
+  const e=getTodayEntry();
+  e.priorities=readPrioritiesFromDom();
+  persistToday(e);
+  applyMomentumDetail(e);
+  complete(4,'s-lockin');
+}
+
+/* ── MODES ── */
 function selMode(el){ el.closest('.modes').querySelectorAll('.mcard').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
-function tgl(el){ el.classList.toggle('done'); }
 
 /* ── BREATHING ── */
 const phases=[{lbl:'Breathe In',n:4},{lbl:'Hold',n:4},{lbl:'Breathe Out',n:4},{lbl:'Hold',n:4}];
@@ -660,21 +1133,101 @@ function upBreath(){ const l=document.getElementById('blbl'),n=document.getEleme
 
 /* ── MENU ── */
 function toggleMenu(){
-  const dd=document.getElementById('dropdown'),ham=document.getElementById('ham'),ov=document.getElementById('overlay');
-  const open=dd.classList.contains('open');
-  dd.classList.toggle('open'); ham.classList.toggle('open'); ov.classList.toggle('on');
+  document.getElementById('dropdown').classList.toggle('open');
+  document.getElementById('ham').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('on');
 }
-function closeMenu(){ document.getElementById('dropdown').classList.remove('open'); document.getElementById('ham').classList.remove('open'); document.getElementById('overlay').classList.remove('on'); }
+function closeMenu(){
+  document.getElementById('dropdown').classList.remove('open');
+  document.getElementById('ham').classList.remove('open');
+  document.getElementById('overlay').classList.remove('on');
+}
 
 /* ── SETTINGS ── */
-function openSettings(){ closeMenu(); document.getElementById('set-name').value=userName; document.getElementById('settings-panel').classList.add('open'); }
+function openSettings(){
+  closeMenu();
+  refreshGreetingIfNamed();
+  document.getElementById('set-name').value=userName;
+  document.getElementById('settings-panel').classList.add('open');
+}
 function closeSettings(){ document.getElementById('settings-panel').classList.remove('open'); }
 function panelBgClick(e){ if(e.target===document.getElementById('settings-panel')) closeSettings(); }
+
 function togglePref(el){
   el.classList.toggle('on');
   const prefs=loadPrefs();
   prefs[el.dataset.pref]=el.classList.contains('on');
   savePrefs(prefs);
+}
+
+/* ── CALENDAR ── */
+function openCalendar(){
+  closeMenu();
+  calYear=new Date().getFullYear(); calMonth=new Date().getMonth();
+  renderCalendar();
+  document.getElementById('calendar-panel').classList.add('open');
+}
+function closeCalendar(){ document.getElementById('calendar-panel').classList.remove('open'); }
+function calendarBgClick(e){ if(e.target===document.getElementById('calendar-panel')) closeCalendar(); }
+
+function calShift(delta){
+  calMonth+=delta;
+  if(calMonth>11){ calMonth=0; calYear++; }
+  if(calMonth<0){ calMonth=11; calYear--; }
+  renderCalendar();
+}
+
+function renderCalendar(){
+  const label=document.getElementById('cal-month-label');
+  const grid=document.getElementById('cal-grid-days');
+  const det=document.getElementById('cal-detail');
+  if(det){ det.classList.remove('visible'); }
+  const first=new Date(calYear,calMonth,1);
+  const startDow=first.getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  label.textContent=first.toLocaleString(undefined,{month:'long',year:'numeric'});
+  grid.innerHTML='';
+  const daysMap=loadDays();
+  for(let i=0;i<startDow;i++){ const e=document.createElement('div'); e.className='cal-cell empty'; grid.appendChild(e); }
+  for(let d=1;d<=daysInMonth;d++){
+    const iso=calYear+'-'+pad2(calMonth+1)+'-'+pad2(d);
+    const cell=document.createElement('button');
+    cell.type='button';
+    cell.className='cal-cell';
+    cell.textContent=String(d);
+    const ent=daysMap[iso];
+    if(ent && (ent.energy!=null||ent.mood!=null||ent.sleep)){
+      cell.classList.add('has');
+      const mark=document.createElement('span');
+      mark.style.fontSize='10px'; mark.style.lineHeight='1';
+      mark.textContent=moodEmoji(ent.mood!=null?ent.mood:5);
+      cell.appendChild(mark);
+      if(ent.locked) cell.classList.add('locked');
+    }
+    cell.addEventListener('click',()=>showCalDetail(iso,daysMap[iso]));
+    grid.appendChild(cell);
+  }
+}
+
+function showCalDetail(iso,ent){
+  const det=document.getElementById('cal-detail');
+  const body=document.getElementById('cal-d-body');
+  const h=document.getElementById('cal-d-date');
+  if(!ent){
+    h.textContent=new Date(iso+'T12:00:00').toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+    body.innerHTML='No log for this day yet.';
+    det.classList.add('visible'); return;
+  }
+  h.textContent=new Date(iso+'T12:00:00').toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+  const moodLine=moodEmoji(ent.mood)+' Mood <strong>'+ent.mood+'/10</strong> · Energy <strong>'+ent.energy+'/10</strong>';
+  const sleep='<div>Sleep: <strong>'+escapeHtml(ent.sleep||'—')+'</strong></div>';
+  const check='<div>'+moodLine+'</div>';
+  const focus='<div style="margin-top:6px">Focus: <strong>'+escapeHtml((ent.main||'—'))+'</strong></div>';
+  const pri=(ent.priorities||[]).map(p=>((escapeHtml(p.text||'')||'(empty)')+' <span style="opacity:.6">('+escapeHtml(p.tag||'')+')</span>')).join('<br>');
+  const prBlock=pri?('<div style="margin-top:8px">Priorities:<br>'+pri+'</div>'):'';
+  const lock=ent.locked?'<div style="margin-top:8px;color:var(--green)">Ritual completed · locked in</div>':'<div style="margin-top:8px">Partial / in progress</div>';
+  body.innerHTML=sleep+check+focus+prBlock+lock;
+  det.classList.add('visible');
 }
 
 /* ── SIGN OUT ── */
@@ -684,69 +1237,104 @@ function signOut(){
   localStorage.removeItem(NAME_KEY);
   Object.keys(doneSteps).forEach(k=>delete doneSteps[k]);
   for(let i=1;i<=5;i++){ document.getElementById('c'+i).classList.remove('done'); const d=document.getElementById('d'+i);if(d)d.style.display='none'; }
-  document.getElementById('home-cta').innerHTML='Begin Morning Ritual <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2.5l5 5-5 5M2.5 7.5H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  document.getElementById('home-cta').innerHTML='Begin Morning Ritual '+homeCtaSvgPrefix();
   document.getElementById('ob-name').value=''; userName=''; stopBreath();
+  editingLockedDay=false;
   document.getElementById(cur).classList.remove('active'); cur='s-onboard'; prev='s-onboard';
   document.getElementById('s-onboard').classList.add('active');
+  updateHomeModeUI();
 }
 
 /* ── RESET (demo) ── */
 function resetDemo(){
+  const today=getTodayISO();
+  const days=loadDays();
+  delete days[today];
+  saveDays(days);
+  localStorage.removeItem(STREAK_KEY);
   Object.keys(doneSteps).forEach(k=>delete doneSteps[k]);
   for(let i=1;i<=5;i++){ document.getElementById('c'+i).classList.remove('done'); const d=document.getElementById('d'+i);if(d)d.style.display='none'; }
-  document.getElementById('home-cta').innerHTML='Begin Morning Ritual <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2.5l5 5-5 5M2.5 7.5H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
-  stopBreath(); go('s-home');
+  document.getElementById('home-cta').innerHTML='Begin Morning Ritual '+homeCtaSvgPrefix();
+  stopBreath();
+  editingLockedDay=false;
+  const fresh=defaultDayEntry();
+  persistToday(fresh);
+  applyDayToAppState(fresh);
+  refreshStreakUI();
+  go('s-home');
 }
 
 /* ── THEMES ── */
 function setTheme(theme, el){
-  const targets=[document.getElementById('app'), document.body, document.getElementById('settings-panel'), document.getElementById('settings-sheet')];
-  targets.forEach(t=>{ t.removeAttribute('data-theme'); if(theme!=='gold') t.setAttribute('data-theme',theme); });
+  const targets=[document.getElementById('app'), document.body, document.getElementById('settings-panel'), document.getElementById('settings-sheet'), document.getElementById('calendar-panel'), document.getElementById('calendar-sheet')];
+  targets.forEach(t=>{ if(!t)return; t.removeAttribute('data-theme'); if(theme!=='gold') t.setAttribute('data-theme',theme); });
   document.querySelectorAll('.theme-swatch').forEach(s=>s.classList.remove('active'));
   el.classList.add('active');
   activeTheme=theme;
   localStorage.setItem(THEME_KEY,theme);
 }
-function loadPrefs(){
-  try{
-    return JSON.parse(localStorage.getItem(PREF_KEY)) || {};
-  }catch(_){
-    return {};
-  }
-}
-function savePrefs(prefs){
-  localStorage.setItem(PREF_KEY,JSON.stringify(prefs));
-}
+
 function applySavedTheme(){
   const theme=localStorage.getItem(THEME_KEY)||'gold';
-  const swatch=document.querySelector(`.theme-swatch[data-theme="${theme}"]`) || document.querySelector('.theme-swatch[data-theme="gold"]');
+  const swatch=document.querySelector('.theme-swatch[data-theme="'+theme+'"]') || document.querySelector('.theme-swatch[data-theme="gold"]');
   if(swatch) setTheme(theme,swatch);
 }
+
 function applySavedPrefs(){
   const prefs=loadPrefs();
   document.querySelectorAll('.tog[data-pref]').forEach(t=>{
     const key=t.dataset.pref;
-    if(typeof prefs[key]==='boolean'){
-      t.classList.toggle('on',prefs[key]);
-    }
+    if(typeof prefs[key]==='boolean') t.classList.toggle('on',prefs[key]);
   });
 }
+
+function ensureTodayEntryExists(){
+  const t=getTodayISO();
+  const days=loadDays();
+  if(!days[t]){
+    days[t]=defaultDayEntry();
+    saveDays(days);
+  }
+}
+
 function initApp(){
   applySavedTheme();
   applySavedPrefs();
+  bindCheckinRanges();
+
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden) refreshGreetingIfNamed(); });
+  window.addEventListener('focus',refreshGreetingIfNamed);
+  setInterval(refreshGreetingIfNamed,60000);
+
+  ensureTodayEntryExists();
+
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+
   const savedName=(localStorage.getItem(NAME_KEY)||'').trim();
+  const entry=getTodayEntry();
+
+  refreshStreakUI();
+
   if(savedName){
     userName=savedName;
     document.getElementById('ob-name').value=savedName;
     document.getElementById('set-name').value=savedName;
     document.getElementById('dd-username').textContent='👋 Hey, '+savedName;
-    setGreeting(savedName);
-    document.getElementById('s-onboard').classList.remove('active');
     cur='s-home';
     prev='s-home';
     document.getElementById('s-home').classList.add('active');
+    applyDayToAppState(entry);
+    setGreeting(savedName);
+  } else {
+    cur='s-onboard';
+    prev='s-onboard';
+    document.getElementById('s-onboard').classList.add('active');
+    applyDayToAppState(entry);
   }
+
+  const ls=document.getElementById('lock-steps'); if(ls) ls.textContent=Object.keys(doneSteps).length+'/5';
 }
+
 initApp();
 </script>
 </body>
